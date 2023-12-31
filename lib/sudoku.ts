@@ -12,7 +12,7 @@ export const determineDifficulties: (str: string) => TDifficulties = (
 ) => {
   const missingTilesNum = sudokuStr
     .split('')
-    .filter((str) => str === '.').length;
+    .filter((str) => str === '-').length;
 
   if (missingTilesNum < 27) return 'EASY';
   if (missingTilesNum < 50) return 'NORMAL';
