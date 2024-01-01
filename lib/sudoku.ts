@@ -7,6 +7,8 @@ export type TCoordinates = {
 
 export type TDifficulties = 'EASY' | 'NORMAL' | 'HARD' | 'SUPER';
 
+export type TCellStatus = 'QUESTION' | 'BLANK' | 'NOTCHECK' | 'WRONG' | 'RIGHT' | 'WIN';
+
 export const determineDifficulties: (str: string) => TDifficulties = (
   sudokuStr
 ) => {
@@ -21,10 +23,32 @@ export const determineDifficulties: (str: string) => TDifficulties = (
 };
 
 export const generateSudokuRows = (sudokuStr: string) => {
+  var sudokuStr2= sudokuStr
+  if(sudokuStr==''){
+    for (let index = 0; index < 81; index++) {
+      sudokuStr2 += '-';
+    }
+  }
   return _times(9, (round: number) => {
     const rowStart = round * 9;
     const rowEnd = (round + 1) * 9;
-    return sudokuStr.slice(rowStart, rowEnd).split('');
+    return sudokuStr2.slice(rowStart, rowEnd).split('');
+  });
+};
+
+export const generateSudokuStatus = (sudokuStr: string) => {
+  var sudokuStr2= sudokuStr
+  if(sudokuStr==''){
+    for (let index = 0; index < 81; index++) {
+      sudokuStr2 += '-';
+    }
+  }
+  sudokuStr2 = sudokuStr2.replaceAll(/[1-9]/g,'0')
+  sudokuStr2 = sudokuStr2.replaceAll('-','1')
+  return _times(9, (round: number) => {
+    const rowStart = round * 9;
+    const rowEnd = (round + 1) * 9;
+    return sudokuStr2.slice(rowStart, rowEnd).split('');
   });
 };
 

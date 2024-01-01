@@ -7,52 +7,66 @@ import { checkSolutionValidity, TCoordinates } from '@/lib/sudoku';
 
 
 type TCellProps = {
-    puzzleValue: string;
+    cellValue: string | number;
+    cellStatus: string;
     coor: TCoordinates;
     isDisabled: boolean;
-    onCellChange:(puzzleValue:string,coor:TCoordinates)=>void;
+    onCellChange: (puzzleValue: string, coor: TCoordinates) => void;
 };
 
-const Cell = ({ puzzleValue, coor, isDisabled, onCellChange}: TCellProps) => {
+const Cell = ({ cellValue, cellStatus, coor, isDisabled, onCellChange }: TCellProps) => {
 
-    const [thisPuzzleValue, setThisPuzzleValue] = useState(puzzleValue);
-
-    if (!(thisPuzzleValue == puzzleValue)) {
-        setThisPuzzleValue(puzzleValue);
-    }
-
-    const handleInput = (inputValue: string, inputCoor: TCoordinates) => {
-        if (!!parseInt(inputValue)) {
-            console.log('handleInput +');
-            console.log(inputValue);
-            setThisPuzzleValue(inputValue);
-            onCellChange(inputValue,{
+    const handleChange = (inputValue: string, inputCoor: TCoordinates) => {
+        console.log(inputValue);
+        if (!!inputValue) {
+            onCellChange(inputValue, {
                 x: coor.x,
                 y: coor.y,
             });
         }
         else {
-            setThisPuzzleValue('');
+            onCellChange('', {
+                x: coor.x,
+                y: coor.y,
+            });
+
+
         }
     }
 
     return (
         <div
             id={`sudoku-cell-${coor.x}${coor.y}`}
-            className={classNames('flex aspect-square items-center border text-blue-700', {
+            className={classNames('flex aspect-square items-center border', {
                 'border-b-gray-700': (coor.x + 1) % 3 === 0 && coor.x < 8,
                 'border-r-gray-700': (coor.y + 1) % 3 === 0 && coor.y < 8,
-                //'text-red-700': invalidCoors.includes(`${coor.x}${coor.y}`), // mark text number to red when invalid
             })}>
             <input
-                className="h-full w-full grow text-center text-2xl font-bold sm:text-2xl md:text-2xl"
+                className={classNames('h-full w-full grow text-center text-2xl font-bold sm:text-2xl md:text-2xl transition duration-500', {
+                    'text-gray-700': cellStatus == '0', // mark text number to red when invalid
+                    'bg-gray-100': cellStatus == '0', // mark text number to red when invalid
+                    'text-blue-700': parseInt(cellStatus) >= 1, // mark text number to red when invalid
+                    'text-red-300': cellStatus == '2', // mark text number to red when invalid
+                    'bg-red-100': cellStatus == '3', // mark text number to red when invalid
+                    'text-red-500': cellStatus == '4', // mark text number to red when invalid
+                    'bg-green-100': cellStatus == '5', // mark text number to red when invalid
+                    'text-green-700': cellStatus == '5', // mark text number to red when invalid
+                })}
                 type="number"
                 min={0}
                 max={9}
                 maxLength={1}
-                value={thisPuzzleValue}
+                value={cellValue}
+                onClick={(e) =>
+                    void handleChange(
+                        cellValue as string,
+                        {
+                            x: coor.x,
+                            y: coor.y,
+                        }
+                    )}
                 onChange={(e) =>
-                    void handleInput(
+                    void handleChange(
                         e.target.value.split('').pop() as string, // making sure only single digit is being inputted
                         {
                             x: coor.x,

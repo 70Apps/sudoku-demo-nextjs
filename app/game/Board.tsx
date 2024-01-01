@@ -6,18 +6,15 @@ import Cell from './Cell'
 
 type TBoardProps = {
   sudokuRows: string[][];
-  onBoardChange:(puzzleValue:string,coor:TCoordinates)=>void;
+  sudokuStatus: string[][];
+  onBoardChange: (puzzleValue: string, coor: TCoordinates) => void;
 };
 
-const Board = ({ sudokuRows,onBoardChange }: TBoardProps) => {
+const Board = ({ sudokuRows, sudokuStatus, onBoardChange }: TBoardProps) => {
 
-  const [thisBoradSudokuRows, setThisBoradSudokuRows] = useState(sudokuRows);
 
-  if (!(thisBoradSudokuRows == sudokuRows)) {
-    setThisBoradSudokuRows(sudokuRows);
-  }
-  const handleCellChange = (puzzleValue:string,coor:TCoordinates) => {
-    onBoardChange(puzzleValue,coor);
+  const handleCellChange = (inputValue: string, coor: TCoordinates) => {
+    onBoardChange(inputValue, coor);
   }
   return (
     <>
@@ -25,7 +22,7 @@ const Board = ({ sudokuRows,onBoardChange }: TBoardProps) => {
         id="sudoku-board"
         className="mx-auto my-8 grid aspect-square max-w-screen-md grid-rows-9 gap-0 border-2 border-gray-700"
       >
-        {thisBoradSudokuRows?.map((row, rowIdx) => (
+        {sudokuRows?.map((row, rowIdx) => (
           <div
             className="grid grid-cols-9 gap-0"
             id={`sudoku-row-${rowIdx}`}
@@ -33,7 +30,8 @@ const Board = ({ sudokuRows,onBoardChange }: TBoardProps) => {
           >
             {row.map((col, colIdx) => (
               <Cell
-                puzzleValue={col}
+                cellValue={col == '-' ? '' : col}
+                cellStatus = {sudokuStatus[rowIdx][colIdx]}
                 coor={{ x: rowIdx, y: colIdx }}
                 //isDisabled={!!completionTimeInSecs || col !== '.'}
                 isDisabled={col !== '.'}
