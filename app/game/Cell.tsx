@@ -42,11 +42,11 @@ const Cell = ({ cellValue, cellStatus, coor, isDisabled, onCellChange }: TCellPr
                 'border-r-gray-700': (coor.y + 1) % 3 === 0 && coor.y < 8,
             })}>
             <input
-                className={classNames('h-full w-full grow text-center text-2xl font-bold sm:text-2xl md:text-2xl transition duration-500', {
+                className={classNames('h-full w-full grow text-center font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl transition duration-500', {
                     'text-gray-700': cellStatus == '0', // mark text number to red when invalid
                     'bg-gray-100': cellStatus == '0', // mark text number to red when invalid
                     'text-blue-700': parseInt(cellStatus) >= 1, // mark text number to red when invalid
-                    'text-red-300': cellStatus == '2', // mark text number to red when invalid
+                    'text-blue-500': cellStatus == '2', // mark text number to red when invalid
                     'bg-red-100': cellStatus == '3', // mark text number to red when invalid
                     'text-red-500': cellStatus == '4', // mark text number to red when invalid
                     'bg-green-100': cellStatus == '5', // mark text number to red when invalid
@@ -57,14 +57,6 @@ const Cell = ({ cellValue, cellStatus, coor, isDisabled, onCellChange }: TCellPr
                 max={9}
                 maxLength={1}
                 value={cellValue}
-                onClick={(e) =>
-                    void handleChange(
-                        cellValue as string,
-                        {
-                            x: coor.x,
-                            y: coor.y,
-                        }
-                    )}
                 onChange={(e) =>
                     void handleChange(
                         e.target.value.split('').pop() as string, // making sure only single digit is being inputted

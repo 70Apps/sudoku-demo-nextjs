@@ -26,7 +26,8 @@ const Puzzle = () => {
   };
 
   const [thisSudokuPuzzle, setThisSudokuPuzzle] = useState(sudokuPuzzle);
-
+  const [promptContent, setPromptContent] = useState('欢迎光临超级数独游戏');
+  
 
   const handleButtonNew = () => {
     console.log('handleButtonNew +');
@@ -62,7 +63,10 @@ const Puzzle = () => {
     sudokuPuzzleUpdate.rows = generateSudokuRows(sudokuPuzzleUpdate.solution);
     for (let i = 0; i < sudokuPuzzleUpdate.status.length; i++) {
       for (let j = 0; j < sudokuPuzzleUpdate.status[i].length; j++) {
-        sudokuPuzzleUpdate.status[i][j] = '2';
+        if(!(sudokuPuzzleUpdate.status[i][j] == '0'))
+        {
+          sudokuPuzzleUpdate.status[i][j] = '2';
+        }
       }
     }
     setThisSudokuPuzzle(sudokuPuzzleUpdate);
@@ -70,54 +74,70 @@ const Puzzle = () => {
 
 
   const handleBoardChange = (inputValue: string, coor: TCoordinates) => {
-
-    if (checkSolutionValidity(inputValue, coor, thisSudokuPuzzle.rows)) {
-      console.log('handleBoardUpdate +');
-      var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
-      sudokuPuzzleUpdate.rows[coor.x][coor.y] = inputValue;
-      if (inputValue == ''){
-        sudokuPuzzleUpdate.status[coor.x][coor.y] = '1';
-      }else{
+    if (!(inputValue == '' || inputValue=='0')) {
+      if (checkSolutionValidity(inputValue, coor, thisSudokuPuzzle.rows)) {
+        console.log('handleBoardUpdate +');
+        var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
+        sudokuPuzzleUpdate.rows[coor.x][coor.y] = inputValue;
         sudokuPuzzleUpdate.status[coor.x][coor.y] = '2';
-      }
-      const rowsAnswer=sudokuPuzzleUpdate.status.join().replaceAll(',','');
-      console.log(rowsAnswer);
-      console.log(rowsAnswer.indexOf('1'));
-      
-      if(rowsAnswer.indexOf('1')==-1){
-        console.log('win');
+        const rowsAnswer = sudokuPuzzleUpdate.status.join().replaceAll(',', '');
+        console.log(rowsAnswer);
+        console.log(rowsAnswer.indexOf('1'));
 
-        for (let i = 0; i < sudokuPuzzleUpdate.status.length; i++) {
-          for (let j = 0; j < sudokuPuzzleUpdate.status[i].length; j++) {
-            sudokuPuzzleUpdate.status[i][j] = '5';
+        if (rowsAnswer.indexOf('1') == -1) {
+          setPromptContent('恭喜过关！');
+          for (let i = 0; i < sudokuPuzzleUpdate.status.length; i++) {
+            for (let j = 0; j < sudokuPuzzleUpdate.status[i].length; j++) {
+              sudokuPuzzleUpdate.status[i][j] = '5';
+            }
           }
         }
-      }
-      setThisSudokuPuzzle(sudokuPuzzleUpdate);
-    } else {
-
-      var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
-      const lastStatus = sudokuPuzzleUpdate.status[coor.x][coor.y];
-      const x = coor.x;
-      const y = coor.y;
-      sudokuPuzzleUpdate.status[coor.x][coor.y] = '3';
-      setThisSudokuPuzzle(sudokuPuzzleUpdate);
-      setTimeout(function () {
-        var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
-        sudokuPuzzleUpdate.status[x][y] = lastStatus;
+        else{
+          setPromptContent('不错哟！');
+        }
         setThisSudokuPuzzle(sudokuPuzzleUpdate);
-      }, 500);
+      } else {
+        var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
+        const lastStatus = sudokuPuzzleUpdate.status[coor.x][coor.y];
+        const x = coor.x;
+        const y = coor.y;
+        sudokuPuzzleUpdate.status[coor.x][coor.y] = '3';
+        setThisSudokuPuzzle(sudokuPuzzleUpdate);
+        setPromptContent('这里不能填'+inputValue+'哟');
+        setTimeout(function () {
+          var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
+          sudokuPuzzleUpdate.status[x][y] = lastStatus;
+          setThisSudokuPuzzle(sudokuPuzzleUpdate);
+        }, 500);
+        setTimeout(function () {
+          setPromptContent('加油呀！');
+        }, 3000);
+      }
+    }else{
+      var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
+      sudokuPuzzleUpdate.rows[coor.x][coor.y] = '';
+      sudokuPuzzleUpdate.status[coor.x][coor.y] = '1';
+      setThisSudokuPuzzle(sudokuPuzzleUpdate);
     }
   }
 
   return (
     <>
-      <div className="w-full ">
+    <div className="w-full">
+      <div className="text-center w-80 rounded-full mt-4 mx-auto border border-transparent px-2 py-2 transition-colors border-gray-300">{promptContent}</div>
+    </div>
+      <div className="w-full">
         <Board sudokuRows={thisSudokuPuzzle.rows} sudokuStatus={thisSudokuPuzzle.status} onBoardChange={handleBoardChange} />
       </div>
-      <div className="w-full grid grid-cols-2">
-        <button id="new" onClick={handleButtonNew}>生成新题</button>
-        <button id="answer" onClick={handleButtonAnswer}>查看答案</button>
+      <div className="w-full mx-auto text-center">
+        <button
+          id="new"
+          className="group rounded-lg mx-2 border border-transparent px-5 py-4 transition-colors border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          onClick={handleButtonNew}>生成新题</button>
+        <button
+         id="answer"
+          className="group rounded-lg mx-2 border border-transparent px-5 py-4 transition-colors border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          onClick={handleButtonAnswer}>查看答案</button>
       </div>
     </>
   );
