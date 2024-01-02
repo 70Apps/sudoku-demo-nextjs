@@ -42,6 +42,7 @@ const Puzzle = () => {
     sudokuPuzzleUpdate.status = generateSudokuStatus(_sudokuPuzzle.puzzle);
     setThisSudokuPuzzle(sudokuPuzzleUpdate);
     console.log(sudokuPuzzleUpdate);
+    setPromptContent('准备开始喽！');
   }
 
   const handleButtonCheck = () => {
