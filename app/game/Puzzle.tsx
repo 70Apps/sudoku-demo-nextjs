@@ -7,6 +7,8 @@ import Board from './Board';
 import { generateSudokuRows, generateSudokuStatus, TCellStatus } from '@/lib/sudoku';
 import { getSudoku } from 'sudoku-gen';
 import { checkSolutionValidity, TCoordinates } from '@/lib/sudoku';
+import confetti from 'canvas-confetti';
+
 
 type TPuzzle = {
   puzzle: string;
@@ -27,7 +29,7 @@ const Puzzle = () => {
 
   const [thisSudokuPuzzle, setThisSudokuPuzzle] = useState(sudokuPuzzle);
   const [promptContent, setPromptContent] = useState('欢迎光临超级数独游戏');
-  
+
 
   const handleButtonNew = () => {
     console.log('handleButtonNew +');
@@ -63,8 +65,7 @@ const Puzzle = () => {
     sudokuPuzzleUpdate.rows = generateSudokuRows(sudokuPuzzleUpdate.solution);
     for (let i = 0; i < sudokuPuzzleUpdate.status.length; i++) {
       for (let j = 0; j < sudokuPuzzleUpdate.status[i].length; j++) {
-        if(!(sudokuPuzzleUpdate.status[i][j] == '0'))
-        {
+        if (!(sudokuPuzzleUpdate.status[i][j] == '0')) {
           sudokuPuzzleUpdate.status[i][j] = '2';
         }
       }
@@ -74,7 +75,7 @@ const Puzzle = () => {
 
 
   const handleBoardChange = (inputValue: string, coor: TCoordinates) => {
-    if (!(inputValue == '' || inputValue=='0')) {
+    if (!(inputValue == '' || inputValue == '0')) {
       if (checkSolutionValidity(inputValue, coor, thisSudokuPuzzle.rows)) {
         console.log('handleBoardUpdate +');
         var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
@@ -86,13 +87,27 @@ const Puzzle = () => {
 
         if (rowsAnswer.indexOf('1') == -1) {
           setPromptContent('恭喜过关！');
+          confetti({
+            particleCount: 400,
+            spread: 270,
+            shapes: ['circle', 'circle', 'square'],
+            colors:["#26ccff","#a25afd","#ff5e7e","#88ff5a","#fcff42","#ffa62d","#ff36ff"],
+            gravity: 0.5,
+            startVelocity: 50,
+            ticks: 100
+          }
+          );
           for (let i = 0; i < sudokuPuzzleUpdate.status.length; i++) {
             for (let j = 0; j < sudokuPuzzleUpdate.status[i].length; j++) {
-              sudokuPuzzleUpdate.status[i][j] = '5';
+              if(sudokuPuzzleUpdate.status[i][j] == '0'){
+                sudokuPuzzleUpdate.status[i][j] = '4';
+              }else{
+                sudokuPuzzleUpdate.status[i][j] = '5';
+              }
             }
           }
         }
-        else{
+        else {
           setPromptContent('不错哟！');
         }
         setThisSudokuPuzzle(sudokuPuzzleUpdate);
@@ -103,7 +118,7 @@ const Puzzle = () => {
         const y = coor.y;
         sudokuPuzzleUpdate.status[coor.x][coor.y] = '3';
         setThisSudokuPuzzle(sudokuPuzzleUpdate);
-        setPromptContent('这里不能填'+inputValue+'哟');
+        setPromptContent('这里不能填' + inputValue + '哟');
         setTimeout(function () {
           var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
           sudokuPuzzleUpdate.status[x][y] = lastStatus;
@@ -113,7 +128,7 @@ const Puzzle = () => {
           setPromptContent('加油呀！');
         }, 3000);
       }
-    }else{
+    } else {
       var sudokuPuzzleUpdate = cloneDeep(thisSudokuPuzzle);
       sudokuPuzzleUpdate.rows[coor.x][coor.y] = '';
       sudokuPuzzleUpdate.status[coor.x][coor.y] = '1';
@@ -123,9 +138,9 @@ const Puzzle = () => {
 
   return (
     <>
-    <div className="w-full">
-      <div className="text-center w-80 rounded-full mt-4 mx-auto border border-transparent px-2 py-2 transition-colors border-gray-300">{promptContent}</div>
-    </div>
+      <div className="w-full">
+        <div className="text-center w-80 rounded-full mt-4 mx-auto border border-transparent px-2 py-2 transition-colors border-gray-300">{promptContent}</div>
+      </div>
       <div className="w-full">
         <Board sudokuRows={thisSudokuPuzzle.rows} sudokuStatus={thisSudokuPuzzle.status} onBoardChange={handleBoardChange} />
       </div>
@@ -135,7 +150,7 @@ const Puzzle = () => {
           className="group rounded-lg mx-2 border border-transparent px-5 py-4 transition-colors border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           onClick={handleButtonNew}>生成新题</button>
         <button
-         id="answer"
+          id="answer"
           className="group rounded-lg mx-2 border border-transparent px-5 py-4 transition-colors border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           onClick={handleButtonAnswer}>查看答案</button>
       </div>

@@ -43,14 +43,13 @@ const Cell = ({ cellValue, cellStatus, coor, isDisabled, onCellChange }: TCellPr
             })}>
             <input
                 className={classNames('h-full w-full grow text-center font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl transition duration-500', {
-                    'text-gray-700': cellStatus == '0', // mark text number to red when invalid
+                    'text-gray-700': cellStatus == '0'||cellStatus == '4', // mark text number to red when invalid
                     'bg-gray-100': cellStatus == '0', // mark text number to red when invalid
                     'text-blue-700': parseInt(cellStatus) >= 1, // mark text number to red when invalid
                     'text-blue-500': cellStatus == '2', // mark text number to red when invalid
                     'bg-red-100': cellStatus == '3', // mark text number to red when invalid
-                    'text-red-500': cellStatus == '4', // mark text number to red when invalid
-                    'bg-green-100': cellStatus == '5', // mark text number to red when invalid
                     'text-green-700': cellStatus == '5', // mark text number to red when invalid
+                    'bg-green-100': cellStatus == '4'||cellStatus == '5', // mark text number to red when invalid
                 })}
                 type="number"
                 min={0}
